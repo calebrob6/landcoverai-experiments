@@ -1,0 +1,33 @@
+module:
+    _target_: src.trainers.CustomSemanticSegmentationTask
+    model: 'unet'
+    backbone: 'resnet18'
+    loss: 'ce'
+    weights: true
+    lr: 1e-3
+    patience: 6
+    in_channels: 3
+    num_classes: 5
+    num_filters: 256
+    ignore_index: null
+
+datamodule:
+    _target_: torchgeo.datamodules.LandCoverAIDataModule
+    root: data/LandCoverAI
+    batch_size: 32
+    num_workers: 6
+
+trainer:
+    _target_: lightning.Trainer
+    precision: 16-mixed
+    #log_every_n_steps: 25
+    min_epochs: 10
+    max_epochs: 50
+    devices:
+      - 0
+    accelerator: 'gpu'
+    gradient_clip_val: null
+    default_root_dir: 'logs/landcoverai'
+    benchmark: true
+
+experiment_name: landcoverai_defaults
