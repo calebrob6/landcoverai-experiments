@@ -1,5 +1,6 @@
 from typing import Any
 
+import torch
 import segmentation_models_pytorch as smp
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
@@ -19,6 +20,8 @@ class CustomSemanticSegmentationTask(SemanticSegmentationTask):
         self, *args: Any, cosine_lr_cycle: int = 50, lr_min: float = 1e-6, scheduler: str= "plateau", **kwargs: Any
     ) -> None:
         super().__init__(*args, **kwargs)  # pass args and kwargs to the parent class
+        self.model = torch.compile(self.model)
+
 
     def configure_metrics(self) -> None:
         num_classes: int = self.hparams["num_classes"]
@@ -113,12 +116,13 @@ class CustomSemanticSegmentationTask(SemanticSegmentationTask):
         scheduler: str = self.hparams['scheduler']
         cosine_lr_cycle: int = self.hparams['cosine_lr_cycle']
         lr_min: float = self.hparams['lr_min']
+        patience: int = self.hparams['patience']
 
         optimizer = AdamW(self.parameters(), lr=self.hparams['lr'])
         if scheduler == 'cosine':
             scheduler = CosineAnnealingLR(optimizer, T_max=cosine_lr_cycle, eta_min=lr_min)
         elif scheduler == 'plateau':
-             scheduler = ReduceLROnPlateau(optimizer, patience=self.hparams['patience'])
+             scheduler = ReduceLROnPlateau(optimizer, patience=patience)
         else:
             raise ValueError(f"Scheduler type '{scheduler}' is not valid. Currently, only supports 'cosine' and 'plateau'.")
 

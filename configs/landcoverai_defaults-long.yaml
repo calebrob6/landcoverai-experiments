@@ -5,14 +5,11 @@ module:
     loss: 'ce'
     weights: true
     lr: 1e-3
-    patience: 6
+    patience: 10
     in_channels: 3
     num_classes: 5
     num_filters: 256
     ignore_index: null
-    scheduler: 'cosine'
-    cosine_lr_cycle: 25
-    lr_min: 1e-6
 
 datamodule:
     _target_: torchgeo.datamodules.LandCoverAIDataModule
@@ -33,4 +30,4 @@ trainer:
     default_root_dir: 'logs/landcoverai'
     benchmark: true
 
-experiment_name: landcoverai_defaults_cosine-long
+experiment_name: landcoverai_defaults-long

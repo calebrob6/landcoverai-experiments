@@ -5,7 +5,7 @@ module:
     loss: 'ce'
     weights: true
     lr: 1e-3
-    patience: 6
+    patience: 10
     in_channels: 3
     num_classes: 5
     num_filters: 256
@@ -14,15 +14,15 @@ module:
 datamodule:
     _target_: torchgeo.datamodules.LandCoverAIDataModule
     root: data/LandCoverAI
-    batch_size: 32
-    num_workers: 6
+    batch_size: 64
+    num_workers: 8
 
 trainer:
     _target_: lightning.Trainer
     precision: 16-mixed
     #log_every_n_steps: 25
     min_epochs: 10
-    max_epochs: 50
+    max_epochs: 75
     devices:
       - 0
     accelerator: 'gpu'
